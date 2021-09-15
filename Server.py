@@ -204,12 +204,12 @@ with LoggingPrinter(logFileName):
                     else:
                         print("Not a valid selection.\n")
             #if the user enters "quit", then the server should kill the remote connection
-            elif command.lower() == 'quit':
+            elif command.lower() == 'stop':
                 print(command)
                 print("Killing the remote connection")
-                sendCommand("quit")
+                sendCommand("stop")
             #if the user enters "stop", the RAT server software should stop running
-            elif command.lower() == "stop":
+            elif command.lower() == "quit":
                 print(command)
                 print("Stopping the RAT server software")
                 print("Log file of session created at " + logFileName)
@@ -222,7 +222,7 @@ with LoggingPrinter(logFileName):
                 sendCommand(command)
     except KeyboardInterrupt as k:
         #gracefully tear down the client connection
-        cmd = "quit"
+        cmd = "stop"
         msg = cmd.encode("UTF-8")
         clientaddr.send(msg)
         message = clientaddr.recv(4096)
@@ -237,7 +237,7 @@ with LoggingPrinter(logFileName):
         #if an exception occurs, try to gracefully tear down the connection. Otherwise, just print the exception
         try:
             # gracefully tear down the client connection
-            cmd = "quit"
+            cmd = "stop"
             msg = cmd.encode("UTF-8")
             clientaddr.send(msg)
             message = clientaddr.recv(4096)

