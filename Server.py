@@ -203,12 +203,12 @@ with LoggingPrinter(logFileName):
                         break
                     else:
                         print("Not a valid selection.\n")
-            #if the user enters "quit", then the server should kill the remote connection
+            #if the user enters "stop", then the server should kill the remote connection
             elif command.lower() == 'stop':
                 print(command)
                 print("Killing the remote connection")
                 sendCommand("stop")
-            #if the user enters "stop", the RAT server software should stop running
+            #if the user enters "quit", the RAT server software should stop running
             elif command.lower() == "quit":
                 print(command)
                 print("Stopping the RAT server software")
