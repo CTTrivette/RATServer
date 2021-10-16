@@ -1,4 +1,4 @@
-#This project is solely for educational or job interview use. The author does not authorize
+#This project is solely for educational use. The author does not authorize
 #the use of this project for any malicious or illegal actions.
 
 #This application allows for arbitrary command execution on the remote client. This application is not a remote shell;
